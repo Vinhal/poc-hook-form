@@ -1,26 +1,46 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import * as yup from 'yup'
+import Form from './Form'
+import useForm from './Form/useForm'
+import Input, { Input as BaseInput } from './Input'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+type FieldValues = {
+  name: string
+  age: string
 }
 
-export default App;
+const validation = {
+  name: yup.string().min(3).required(),
+  age: yup.string().min(4).required(),
+}
+
+const defaultValues = {
+  name: '',
+  age: '',
+}
+
+function App() {
+  const {
+    form,
+    formState: { errors, ...formState },
+  } = useForm<FieldValues>({ validation, defaultValues })
+
+  console.log('out', { errors, formState })
+
+  const onSubmit = (values: FieldValues) => {
+    console.log('call', values)
+  }
+
+  return (
+    <div className="App">
+      <Form formContext={form} onSubmit={onSubmit}>
+        <Input name="name" />
+        <Input name="age" />
+        <BaseInput name="age" />
+        <button type="submit">SUBMIT</button>
+      </Form>
+    </div>
+  )
+}
+
+export default App
